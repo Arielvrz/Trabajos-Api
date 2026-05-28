@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/user.entity';
-import { Task } from './tasks/task.entity';
-import { Categoria } from './tasks/categoria.entity';
-import { UsersModule } from './users/users.module';
-import { TasksModule } from './tasks/tasks.module';
-import { AuthModule } from './auth/auth.module';
+import { User } from '../users/user.entity';
+import { Task } from '../tasks/task.entity';
+import { Categoria } from '../tasks/categoria.entity';
+import { UsersModule } from '../users/users.module';
+import { TasksModule } from '../tasks/tasks.module';
+import { AuthModule } from './auth.module';
 
 require('dotenv').config();
 
