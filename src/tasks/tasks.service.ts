@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { User } from '../users/user.entity';
+import { Categoria } from './categoria.entity';
 
 @Injectable()
 export class TasksService {
@@ -12,24 +13,32 @@ export class TasksService {
 
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+
+        @InjectRepository(Categoria)
+        private readonly categoriasRepository: Repository<Categoria>,
     ) { }
 
-    async createTask(titulo: string, userId: number): Promise<Task> {
+    async createTask(titulo: string, userId: number, categoriaId: number, descripcion?: string): Promise<Task> {
         const user = await this.usersRepository.findOne({ where: { id: userId } });
         if (!user) {
             throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
         }
 
-        const nueva = this.tasksRepository.create({ titulo, user });
+        const categoria = await this.categoriasRepository.findOne({ where: { id: categoriaId } });
+        if (!categoria) {
+            throw new NotFoundException(`Categoría con ID ${categoriaId} no encontrada`);
+        }
+
+        const nueva = this.tasksRepository.create({ titulo, user, categoria, descripcion });
         return this.tasksRepository.save(nueva);
     }
 
     async findAll(): Promise<Task[]> {
-        return this.tasksRepository.find({ relations: ['user'] });
+        return this.tasksRepository.find({ relations: ['user', 'categoria'] });
     }
 
     async findById(id: number): Promise<Task> {
-        const task = await this.tasksRepository.findOne({ where: { id }, relations: ['user'] });
+        const task = await this.tasksRepository.findOne({ where: { id }, relations: ['user', 'categoria'] });
         if (!task) {
             throw new NotFoundException(`Tarea con ID ${id} no encontrada`);
         }

@@ -1,0 +1,670 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API de gestion de tareas y usuarios",
+    "description": "Documento OpenAPI actualizado con los endpoints actuales del proyecto.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "root",
+      "description": "Endpoint principal"
+    },
+    {
+      "name": "auth",
+      "description": "Autenticacion y acceso"
+    },
+    {
+      "name": "usuarios",
+      "description": "Gestion de usuarios"
+    },
+    {
+      "name": "tareas",
+      "description": "Gestion de tareas"
+    },
+    {
+      "name": "categorias",
+      "description": "Gestion de categorias"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["root"],
+        "summary": "Hello World",
+        "responses": {
+          "200": {
+            "description": "Respuesta del endpoint principal",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Hello World!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Login con credenciales simples",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token JWT generado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciales invalidas"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["usuarios"],
+        "summary": "Obtener todos los usuarios",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["usuarios"],
+        "summary": "Crear un usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario creado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["usuarios"],
+        "summary": "Obtener un usuario por ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["usuarios"],
+        "summary": "Actualizar un usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuario actualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["usuarios"],
+        "summary": "Eliminar un usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario eliminado"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "tags": ["tareas"],
+        "summary": "Obtener todas las tareas",
+        "responses": {
+          "200": {
+            "description": "Lista de tareas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["tareas"],
+        "summary": "Crear una tarea",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaskDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tarea creada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario o categoria no encontrada"
+          }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "tags": ["tareas"],
+        "summary": "Obtener una tarea por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarea no encontrada"
+          }
+        }
+      },
+      "put": {
+        "tags": ["tareas"],
+        "summary": "Actualizar una tarea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTaskDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarea actualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tarea no encontrada"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["tareas"],
+        "summary": "Eliminar una tarea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea eliminada"
+          },
+          "404": {
+            "description": "Tarea no encontrada"
+          }
+        }
+      }
+    },
+    "/categorias": {
+      "get": {
+        "tags": ["categorias"],
+        "summary": "Obtener todas las categorias",
+        "responses": {
+          "200": {
+            "description": "Lista de categorias",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Categoria"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["categorias"],
+        "summary": "Crear una categoria",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Categoria creada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Categoria"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categorias/{id}": {
+      "get": {
+        "tags": ["categorias"],
+        "summary": "Obtener una categoria por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categoria encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Categoria"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria no encontrada"
+          }
+        }
+      },
+      "put": {
+        "tags": ["categorias"],
+        "summary": "Actualizar una categoria",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categoria actualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Categoria"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria no encontrada"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["categorias"],
+        "summary": "Eliminar una categoria",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categoria eliminada"
+          },
+          "404": {
+            "description": "Categoria no encontrada"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@api.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "1234"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        }
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "required": ["nombre", "email"],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Juan Perez"
+          },
+          "email": {
+            "type": "string",
+            "example": "juan@example.com"
+          }
+        }
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Juan Pablo Perez"
+          },
+          "email": {
+            "type": "string",
+            "example": "nuevo@example.com"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "nombre": { "type": "string", "example": "Juan Perez" },
+          "email": { "type": "string", "example": "juan@example.com" }
+        }
+      },
+      "CreateTaskDto": {
+        "type": "object",
+        "required": ["titulo", "userId", "categoriaId"],
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "example": "Implementar autenticacion"
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Integrar JWT en la API"
+          },
+          "userId": {
+            "type": "integer",
+            "example": 1
+          },
+          "categoriaId": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "UpdateTaskDto": {
+        "type": "object",
+        "properties": {
+          "titulo": { "type": "string", "example": "Implementar autenticacion" },
+          "descripcion": { "type": "string", "example": "Actualizar detalles" },
+          "userId": { "type": "integer", "example": 1 },
+          "categoriaId": { "type": "integer", "example": 1 },
+          "completada": { "type": "boolean", "example": true }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "titulo": { "type": "string", "example": "Implementar autenticacion" },
+          "descripcion": { "type": "string", "example": "Integrar JWT en la API" },
+          "completada": { "type": "boolean", "example": false },
+          "fechaCreacion": { "type": "string", "format": "date-time", "example": "2026-05-27T10:00:00.000Z" }
+        }
+      },
+      "CreateCategoriaDto": {
+        "type": "object",
+        "required": ["nombre"],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Trabajo"
+          }
+        }
+      },
+      "UpdateCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Trabajo actualizado"
+          }
+        }
+      },
+      "Categoria": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "nombre": { "type": "string", "example": "Trabajo" }
+        }
+      }
+    }
+  }
+}
